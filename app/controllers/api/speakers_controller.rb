@@ -1,6 +1,6 @@
 class Api::SpeakersController < ApplicationController
   def index
-    @speakers = Speaker.all
+    @speakers = Speaker.all.order(age: :asc)
     render 'index.json.jbuilder'
   end
 
