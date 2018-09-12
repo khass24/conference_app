@@ -1,4 +1,6 @@
 class Meeting < ApplicationRecord
+  belongs_to :speaker
+
   validates :title, length: {minimum: 2}
   validates :title, uniqueness: true
   validates :title, presence: true

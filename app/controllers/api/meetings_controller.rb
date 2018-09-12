@@ -1,40 +1,43 @@
 class Api::MeetingsController < ApplicationController
-   def index
-    @meetings = Meeting.where(remote: true)
+  def index
+    @meetings = Meeting.all
     render 'index.json.jbuilder'
-  end
-
-  def create
-    @meeting = Meeting.new(
-                          title: params[:title],
-                          agenda: params[:agenda],
-                          time: params[:time],
-                          location: params[:location],
-                          remote: params[:remote]
-                         )
-    if @meeting.save
-      render 'show.json.jbuilder'
-    else
-      render json: {errors: @meeting.errors.full_messages}, status: :unprocessable_entity
-    end
   end
 
   def show
     @meeting = Meeting.find(params[:id])
     render 'show.json.jbuilder'
-  end  
+  end
+
+  def create
+    @meeting = Meeting.new(
+      title: params[:title],
+      agenda: params[:agenda],
+      time: params[:time],
+      location: params[:location],
+      remote: params[:remote]
+      speaker_id: params[:speaker_id]
+    )
+    if @meeting.save #happy path
+      render 'show.json.jbuilder'
+    else #sad path
+      render json: {errors: @meeting.errors.full_messages}, status: :unprocessable_entity
+    end
+  end
 
   def update
     @meeting = Meeting.find(params[:id])
+
     @meeting.title = params[:title] || @meeting.title
-    @meeting.agenda =meeting[:agenda] || @meeting.agenda
+    @meeting.agenda = params[:agenda] || @meeting.agenda
     @meeting.time = params[:time] || @meeting.time
     @meeting.location = params[:location] || @meeting.location
     @meeting.remote = params[:remote] || @meeting.remote
-    
-    if @meeting.save
+    @meeting.speaker_id = params[:speaker_id] || @meeting.speaker_id
+
+    if @meeting.save #happy path
       render 'show.json.jbuilder'
-    else
+    else #sad path
       render json: {errors: @meeting.errors.full_messages}, status: :unprocessable_entity
     end
   end
@@ -42,6 +45,6 @@ class Api::MeetingsController < ApplicationController
   def destroy
     @meeting = Meeting.find(params[:id])
     @meeting.destroy
-    render json: {message: "Product successfully destroyed"}
+    render json: {message: "Meeting successfully destroyed"}
   end
 end
